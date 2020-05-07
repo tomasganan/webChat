@@ -1,0 +1,81 @@
+<div class="login-page" *ngIf="!loginStatus">
+  <div class="login-box">
+    <div class="login-content">
+      <h1>Inicia sesion para entrar al chat</h1>
+        <input  [(ngModel)]="user"  placeholder="Nick" type="text" required [ngModelOptions]="{standalone: true}">
+        <button mat-raised-button color="primary" (click)="login()">Iniciar secion</button>
+      <div>
+      </div>
+    </div>
+    <img src="assets/chat-illustration-1.svg" />
+  </div>
+</div>
+<div class="chat-toolbar" *ngIf="loginStatus">
+  <div class="logo">
+    <img src="assets/chat-logo.svg" />
+    <span>Chat</span>
+    
+
+  </div>
+  <div class="user-profile">
+  <span>
+    Bienvenido <b> {{user}} </b>
+  </span>
+  </div>
+</div>
+<div class="chat-page" *ngIf="loginStatus">
+  <div class="chat-box">
+    <div class="main">
+      <div class="contacts-title">Contactos</div>
+      <ul>
+       <div *ngFor="let c of contacts">
+        <li *ngIf="c == toContact" style="background-color: #1b47db"  (click)="toMessage(c)">
+          <div class="image-container">
+      <span
+        class="circle"
+      ></span>
+          </div>
+          <div class="contacts-info">
+            <span class="status-title" style="color: white">{{c}}</span>
+          </div>
+        </li>
+        <li *ngIf="c != toContact" (click)="toMessage(c)">
+          <div class="image-container">
+      <span
+        class="circle"
+      ></span>
+          </div>
+          <div class="contacts-info">
+            <span class="status-title">{{c}}</span>
+          </div>
+        </li>
+
+      </div>
+      </ul>
+    </div>
+    <div style="width: 100%" class="main">
+      <div class="user-info">{{toContact}}</div>
+      <div class="messages-container">
+        <ul>
+          <div *ngFor="let m of messages">
+            <div *ngIf="m.from == toContact">
+              <li *ngIf="m.receive" style="background-color: #1b47db">
+                <span style="color: white">&nbsp;&nbsp;&nbsp;  {{m.msj}}</span>
+              </li>
+              <li *ngIf="!m.receive" style="background-color: #bbbebe">
+                <span>&nbsp;&nbsp;&nbsp;  {{m.msj}}</span>
+              </li>
+            </div>
+          </div>
+        </ul>
+      </div>
+      <div class="input-container">
+        <input type="text"
+               placeholder="Escribir..."
+               [(ngModel)]="message"
+               (keyup.enter)="sendMessage()"
+        />
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script type="text/javascript">
+            function reverseString(str) {
+                // Step 1. Use the split() method to return a new array
+                var splitString = str.split(""); // var splitString = "hello".split("");
+                // ["h", "e", "l", "l", "o"]
+
+                // Step 2. Use the reverse() method to reverse the new created array
+                var reverseArray = splitString.reverse(); // var reverseArray = ["h", "e", "l", "l", "o"].reverse();
+                // ["o", "l", "l", "e", "h"]
+
+                // Step 3. Use the join() method to join all elements of the array into a string
+                var joinArray = reverseArray.join(""); // var joinArray = ["o", "l", "l", "e", "h"].join("");
+                // "olleh"
+
+                //Step 4. Return the reversed string
+                return joinArray; // "olleh"
+            }
+            $(function() {
+                window.WebSocket = window.WebSocket || window.MozWebSocket;
+
+                var websocket = new WebSocket('ws://127.0.0.1:9000',
+                                              'dumb-increment-protocol');
+
+                websocket.onopen = function () {
+                    $('h1').css('color', 'green');
+                };
+
+                websocket.onerror = function () {
+                    $('h1').css('color', 'red');
+                };
+
+                websocket.onmessage = function (message) {
+                    console.log(message.data);
+                    $('div').append($('<p>', { text: reverseString(message.data) }));
+                };
+                
+
+                $('button').click(function(e) {
+                    e.preventDefault();
+                    websocket.send($('input').val());
+                    $('input').val('');
+                });
+            });
+        </script>
+        </head>
+    <body>
+        <h1>WebSockets test</h1>
+        <form>
+            <input type="text" />
+            <button>Send</button>
+        </form>
+        <div></div>
+    </body>
+</html>
