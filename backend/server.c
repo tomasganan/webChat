@@ -4,10 +4,10 @@
 #include <mysql.h>
 #define SIZE 100
 
-// Create a stack with capacity of 100 elements
+// Creacion de pila (100 de capacidad)
 long stack[SIZE];
 
-// Initially stack is empty
+// Inicializacion
 int top = -1;
 
 // Declaracion de variables
@@ -16,7 +16,6 @@ MYSQL_RES *res;
 MYSQL_ROW row;
 
 // Declaracion y seteo de MySQL
-
 char *server = "localhost";
 char *userdb = "tomasito";
 char *password = "Tomas_123"; // ¡Set!
@@ -30,45 +29,39 @@ char iscontact[MAX_STRING] = {0};
 char message[MAX_STRING] = {0};
 char contact[MAX_STRING] = {0};
 
-// Function to push a new element in stack.
+// Funcion para pushear nuevos elementos a la pila
 
 void push(long element){
-    // Check stack overflow
     if (top >= SIZE){
-        printf("Stack Overflow, can't add more element element to stack.\n");
+        printf("NO se puede agregar más elementos. \n");
         return;
     }
-    // Increase element count in stack
-    top++;
-    // Push element in stack
-    stack[top] = element;
-    printf("Data pushed to stack.\n");
+    top++; // Incrementar
+    stack[top] = element; // Pushear
+    printf("Datos pusheados OK. \n");
 }
 
-// Function to pop element from top of stack.
+// Funcion pop
 
 int pop(){
-    // Check stack underflow
     if (top < 0){
-        printf("Stack is empty.\n");
+        printf("Pila vacia.\n");
         return INT_MIN;
     }
     return stack[top--];
 }
 
-// Function declaration to perform push and pop on stack
+// Declaracion de funcion para realizar push-pop
 
 void push(long element);
 int  pop();
 
-//
+// ----------------------------- //
 
 int explode(char ***arr_ptr, char *str, char delimiter){
   char *src = str, *end, *dst;
   char **arr;
   int size = 1, i;
-
-  // Find number of strings
 
   while ((end = strchr(src, delimiter)) != NULL){
       ++size;
@@ -93,8 +86,6 @@ int explode(char ***arr_ptr, char *str, char delimiter){
   return size;
 }
 
-
-
 static int callback_http(struct lws *wsi,
                          enum lws_callback_reasons reason, void *user,
                          void *in, size_t len){
@@ -107,7 +98,7 @@ static int callback_dumb_increment(struct lws *wsi,
     long wsi_adress = wsi;
     conn = mysql_init(NULL);
 
-    // Connect to database
+    // Conexion a la base de datos
 
     if (!mysql_real_connect(conn, server, userdb, password, database, 8889, NULL, 0)){
         fprintf(stderr, "%s\n", mysql_error(conn));
@@ -115,8 +106,8 @@ static int callback_dumb_increment(struct lws *wsi,
     }
 
     switch (reason) {
-        case LWS_CALLBACK_ESTABLISHED: // Just log message that someone is connecting
-            printf("connection established\n");
+        case LWS_CALLBACK_ESTABLISHED:
+            printf("Conexion establecida. \n");
             break;
 
         case LWS_CALLBACK_CLOSED: {
@@ -124,7 +115,7 @@ static int callback_dumb_increment(struct lws *wsi,
             if (mysql_query(conn, query)) {
                     fprintf(stderr, "%s\n", mysql_error(conn));
             }
-                // RESET CONTACT
+                // Reseteo contacto
 
                 char contact[MAX_STRING] = {0};
                 char reset[MAX_STRING] = {0};
@@ -141,7 +132,6 @@ static int callback_dumb_increment(struct lws *wsi,
                 long long wsi_long;
                 while ((row = mysql_fetch_row(res)) != NULL) {
                     strcpy(value, row[1]);
-                    // Convert the provided value to a decimal long 
                     wsi_long = strtoll(value, &eptr, 10);
                     free(out);
                     push(wsi_long);
@@ -159,9 +149,8 @@ static int callback_dumb_increment(struct lws *wsi,
                     snprintf(reset, MAX_STRING, "reset");
                     len = strlen(reset);
                     out = (char *)malloc(sizeof(char)*(LWS_SEND_BUFFER_PRE_PADDING + len + LWS_SEND_BUFFER_POST_PADDING));
-                        // Setup the buffer
+                        // Configuracion del buffer
                     memcpy (out + LWS_SEND_BUFFER_PRE_PADDING, reset, len );
-                        // Write out
                     lws_write(stack[i],  out + LWS_SEND_BUFFER_PRE_PADDING, len, LWS_WRITE_TEXT);
                     free(out);
                 }
@@ -173,9 +162,8 @@ static int callback_dumb_increment(struct lws *wsi,
                         len = strlen(contact);
 
                         out = (char *)malloc(sizeof(char)*(LWS_SEND_BUFFER_PRE_PADDING + len + LWS_SEND_BUFFER_POST_PADDING));
-                        // Setup the buffer
+                        // Configuracion del buffer
                         memcpy (out + LWS_SEND_BUFFER_PRE_PADDING, contact, len );
-                        // Write out
                         lws_write(stack[j],  out + LWS_SEND_BUFFER_PRE_PADDING, len, LWS_WRITE_TEXT);
                         free(out);
                     }
@@ -186,7 +174,7 @@ static int callback_dumb_increment(struct lws *wsi,
                 break;
         }
 
-        case LWS_CALLBACK_RECEIVE: { // Buffer creation to store the response 
+        case LWS_CALLBACK_RECEIVE: { // Creacion de buffer para almacenar respuesta 
             unsigned char *buf = (unsigned char*) malloc(LWS_SEND_BUFFER_PRE_PADDING + len + LWS_SEND_BUFFER_POST_PADDING);
             int i;
 
@@ -194,15 +182,13 @@ static int callback_dumb_increment(struct lws *wsi,
                 buf[LWS_SEND_BUFFER_PRE_PADDING + (len - 1) - i ] = ((char *) in)[i];
             }
 
-            // Save User
-
+            // Guardar usuario
             int n;
             int len;
             char *out = NULL;
             char listContact[MAX_STRING] = {0};
 
-            // Send SQL query
-
+            // Enviar consulta SQL
             char **arr;
             char **arr2;
             char isUserNameString[MAX_STRING] = {0};
@@ -220,15 +206,14 @@ static int callback_dumb_increment(struct lws *wsi,
                     fprintf(stderr, "%s\n", mysql_error(conn)); 
                     len = strlen(mysql_error(conn));
                     out = (char *)malloc(sizeof(char)*(LWS_SEND_BUFFER_PRE_PADDING + len + LWS_SEND_BUFFER_POST_PADDING));
-                    // setup the buffer
+                    // Configuracion del buffer
                     memcpy (out + LWS_SEND_BUFFER_PRE_PADDING, mysql_error(conn), len );
-                    // write out
                     lws_write(wsi,  out + LWS_SEND_BUFFER_PRE_PADDING, len, LWS_WRITE_TEXT);
                     free(out);
                     break;
                 }
 
-                // RESET CONTACT
+                // Reseteo contacto
 
                 char contact[MAX_STRING] = {0};
                 char reset[MAX_STRING] = {0};
@@ -245,9 +230,6 @@ static int callback_dumb_increment(struct lws *wsi,
                 long long wsi_long;
                 while ((row = mysql_fetch_row(res)) != NULL) {
                     strcpy(value, row[1]);
-
-                    // Convert the provided value to a decimal long 
-
                     wsi_long = strtoll(value, &eptr, 10);
                     free(out);
                     push(wsi_long);
@@ -267,9 +249,8 @@ static int callback_dumb_increment(struct lws *wsi,
                     snprintf(reset, MAX_STRING, "reset");
                     len = strlen(reset);
                     out = (char *)malloc(sizeof(char)*(LWS_SEND_BUFFER_PRE_PADDING + len + LWS_SEND_BUFFER_POST_PADDING));
-                        // setup the buffer
+                        // Configuracion del buffer
                     memcpy (out + LWS_SEND_BUFFER_PRE_PADDING, reset, len );
-                        // write out*/
                     lws_write(stack[i],  out + LWS_SEND_BUFFER_PRE_PADDING, len, LWS_WRITE_TEXT);
                     free(out);
                 }
@@ -280,9 +261,8 @@ static int callback_dumb_increment(struct lws *wsi,
                         len = strlen(contact);
 
                         out = (char *)malloc(sizeof(char)*(LWS_SEND_BUFFER_PRE_PADDING + len + LWS_SEND_BUFFER_POST_PADDING));
-                        // Setup the buffer
+                        // Configuracion del buffer
                         memcpy (out + LWS_SEND_BUFFER_PRE_PADDING, contact, len );
-                        // Write out
                         lws_write(stack[j],  out + LWS_SEND_BUFFER_PRE_PADDING, len, LWS_WRITE_TEXT);
                         free(out);
                     }
@@ -293,7 +273,7 @@ static int callback_dumb_increment(struct lws *wsi,
                 break;
             }
 
-            // SEND MENSSAGE
+            // Enviar mensaje
 
             explode(&arr2, (char *) in, ':');
             snprintf(iscontact, MAX_STRING, "%s",  arr2[0]);
@@ -313,9 +293,6 @@ static int callback_dumb_increment(struct lws *wsi,
 
             while ((row = mysql_fetch_row(res)) != NULL) {
                 strcpy(value, row[1]);
-
-                // Convert the provided value to a decimal long 
-
                 wsi_long = strtoll(value, &eptr, 10);
             }
 
@@ -332,9 +309,8 @@ static int callback_dumb_increment(struct lws *wsi,
                 snprintf(messagefull, MAX_STRING, "from:%s:%s", row[2],message);
                 len = strlen(messagefull);
                 out = (char *)malloc(sizeof(char)*(LWS_SEND_BUFFER_PRE_PADDING + len + LWS_SEND_BUFFER_POST_PADDING));
-                //* setup the buffer*/
+                // Configuracion del buffer
                 memcpy (out + LWS_SEND_BUFFER_PRE_PADDING, messagefull, len );
-                //* write out*/
                 lws_write(wsi_long,  out + LWS_SEND_BUFFER_PRE_PADDING, len, LWS_WRITE_TEXT);
                 free(out);
             }
@@ -349,28 +325,27 @@ static int callback_dumb_increment(struct lws *wsi,
 }
 
 static struct lws_protocols protocols[] = {
-    /* first protocol must always be HTTP handler */
     {
-        "http-only",   // name
-        callback_http, // callback
-        0              // per_session_data_size
+        "http-only",   // Nombre
+        callback_http, 
+        0             
     },
     {
-        "dumb-increment-protocol", // protocol name - very important!
-        callback_dumb_increment,   // callback
-        0                          // we don't use any per session data
+        "dumb-increment-protocol", // Nombre del protocolo
+        callback_dumb_increment,    
+        0                          
     },
     {
-        NULL, NULL, 0   /* End of list */
+        NULL, NULL, 0   
     }
 };
 
 int main(void) {
-    // server url will be http://localhost:9000
+    // La URL del servidor será: http://localhost:9000
 
     conn = mysql_init(NULL);
 
-    // Connect to database
+    // Conexion a la base de datos
 
     if (!mysql_real_connect(conn, server, userdb, password, database, 8889, NULL, 0)) {
         fprintf(stderr, "%s\n", mysql_error(conn));
@@ -393,17 +368,17 @@ int main(void) {
         .gid = -1, .uid = -1, .options = 0, NULL, .ka_time = 0, .ka_probes = 0, .ka_interval = 0
     };
 
-    context = lws_create_context(&context_info); // Create 'context' this server
+    context = lws_create_context(&context_info); // Crear 'contexto'
 
     if (context == NULL) {
-        fprintf(stderr, "LWS init failed\n");
+        fprintf(stderr, "LWS falló \n");
         return -1;
     }
     
-    printf("Starting server...\n");
+    printf("Inicio de servidor...\n");
     
     while (1) {
-        lws_service(context, 50); // Process all events and wait 50ms
+        lws_service(context, 50); // Proceso de todos los eventos
     }
     
     lws_context_destroy(context);
