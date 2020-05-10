@@ -24,10 +24,8 @@ sudo apt-get install mysql-server
 - Ejecución del backend (servidor)
 
 1. Ingresar al directorio /src.
-2. Sobre la terminal de dicha carpeta ejecutar el comando "make carpeta" donde se crean los directos bin y obj.
-3. Ejecutar comando make para compilar y generar el archivo ejecutable.
-4. Ingresar en la carpeta /bin y ejecutar en la terminar "$./server".
-
+2. Sobre la terminal de dicha carpeta ejecutar el comando "make programa".
+4. Ejecutar en la terminal "./server".
 
 ##### FRONTEND (Cliente) #####
 
