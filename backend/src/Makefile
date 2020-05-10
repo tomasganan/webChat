@@ -1,4 +1,7 @@
 # Compilación programa principal
 
-programa: server.o
-	gcc -o server `mysql_config --cflags` server.c `mysql_config --libs` -L/usr/local/lib -lwebsockets
+MYSQL_LIBS := $(shell mysql_config --libs)
+MYSQL_CONF := $(shell mysql_config --cflags)
+
+all:
+	gcc server.c funciones.c $(MYSQL_CONF) $(MYSQL_LIBS) -L/usr/local/lib -lwebsockets -o server
