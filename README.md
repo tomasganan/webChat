@@ -31,8 +31,12 @@ sudo apt-get install -y libwebsockets-dev
 
 - Instalación de NodeJS + Angular (FRONTEND)
 ```
+sudo apt install curl
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 sudo apt install nodejs
-npm install -g @angular/cli
+
+sudo apt install npm
+sudo npm install -g @angular/cli
 ```
 
 (Versión NodeJS: 10.20.1 o posterior // Versión Angular: 9.1.0 o posterior)
