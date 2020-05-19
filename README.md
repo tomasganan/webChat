@@ -57,7 +57,7 @@ sudo npm install -g @angular/cli
 
 ### Construido con 🛠️
 
-* **Libwebsocket** - Libreria utilizada para el Backend la cual fue seleccionada por su flexibilidad a la hora de implementar protocolos de red websocket.
+* **Libwebsocket** - Libreria utilizada para el Backend la cual fue seleccionada por su flexibilidad a la hora de implementar protocolos de red websocket. Mas info: https://libwebsockets.org/
 
 * **Angular** - Framework utilizado para el Frontend el cual fue elegido por su estabilidad y simplicidad a la hora de escribirlo. Presenta ventajas como el 'ahorro de tiempo' ya que viene conformada la arquitectura de la aplicación, su organización, etc. Usa lenguaje 'TypeScript' lo que permite que la sintaxis y la forma de leer los códigos de la información sea siempre la misma.
 
