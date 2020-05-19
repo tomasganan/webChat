@@ -1,6 +1,6 @@
 #include "../include/header.h"
 
-// Funcion para pushear nuevos elementos a la pila
+// Funcion push (Pushea nuevos elementos a la pila)
 
 extern int top;
 
@@ -14,7 +14,7 @@ void push(long element){
     printf("Datos pusheados OK. \n");
 }
 
-// Funcion pop
+// Funcion pop (Elimina elementos de la pila)
 
 int pop(){
     if (top < 0){
@@ -24,15 +24,14 @@ int pop(){
     return stack[top--];
 }
 
-// Funcion reset
+// Funcion reset (Reseteo de contacto = user)
 
 void reset_contact(int len) {
-  // Reseteo contacto
 
   char contact[MAX_STRING] = {0};
   char reset[MAX_STRING] = {0};
   char *out = NULL;
-  snprintf(query, MAX_STRING, "SELECT * FROM users");
+  snprintf(query, MAX_STRING, "SELECT * FROM users"); // Guardo los ID de todos los usuarios
 
   if (mysql_query(conn, query)) {
     fprintf(stderr, "%s\n", mysql_error(conn));
@@ -57,7 +56,7 @@ void reset_contact(int len) {
     exit(1);
   }
   int i = 0;
-  for (i = 0; i < top + 1; i++) {
+  for (i = 0; i < top + 1; i++) { // Recorro la pila
     snprintf(reset, MAX_STRING, "reset");
     len = strlen(reset);
     out = (char *)malloc(sizeof(char) * (LWS_SEND_BUFFER_PRE_PADDING + len +
@@ -69,7 +68,7 @@ void reset_contact(int len) {
   }
   res = mysql_store_result(conn);
   int j = 0;
-  while ((row = mysql_fetch_row(res)) != NULL) {
+  while ((row = mysql_fetch_row(res)) != NULL) { // Refresh de usuarios
     for (j = 0; j < top + 1; j++) {
       snprintf(contact, MAX_STRING, "contact:%s", row[2]);
       len = strlen(contact);

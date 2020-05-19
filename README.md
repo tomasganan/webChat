@@ -18,6 +18,7 @@ _Estas instrucciones te permitirán obtener una copia del proyecto en funcionami
 ```
 sudo apt-get update
 sudo apt-get install mysql-server
+sudo apt install libmysqlclient-dev
 ```
 
 2. Instale el gestor de base de datos mas cómodo para usted (DBeaver, MySQL Workbench, etc)

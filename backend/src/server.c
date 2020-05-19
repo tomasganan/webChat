@@ -40,13 +40,12 @@ static int callback_http(struct lws *wsi,
 static int callback_dumb_increment(struct lws *wsi,
                                    enum lws_callback_reasons reason,
                                    void *user, void *in, size_t len){
-    long wsi_adress = wsi;
-    conn = mysql_init(NULL);
+    long wsi_adress = wsi; // El WSI seria como el puntero a la instancia de un websocket
+    conn = mysql_init(NULL); // Declaracion de variable para la dB
 
     // Conexion a la base de datos
-
     if (!mysql_real_connect(conn, server, userdb, password, database, 8889, NULL, 0)){
-        fprintf(stderr, "%s\n", mysql_error(conn));
+        fprintf(stderr, "%s\n", mysql_error(conn)); // En caso de error, lo comunica
         exit(1);
     }
 
@@ -55,7 +54,7 @@ static int callback_dumb_increment(struct lws *wsi,
             printf("Conexion establecida. \n");
             break;
 
-        case LWS_CALLBACK_CLOSED: {
+        case LWS_CALLBACK_CLOSED: { // Fin sesion del websocket
             snprintf(query, MAX_STRING, "DELETE FROM users WHERE token=%lu", wsi_adress);
             if (mysql_query(conn, query)) {
                     fprintf(stderr, "%s\n", mysql_error(conn));
@@ -109,13 +108,12 @@ static int callback_dumb_increment(struct lws *wsi,
             }
 
             // Enviar mensaje
-
-            explode(&arr2, (char *) in, ':');
+            explode(&arr2, (char *) in, ':'); // Separo el array con dos puntos
             snprintf(iscontact, MAX_STRING, "%s",  arr2[0]);
             snprintf(message, MAX_STRING, "%s",  arr2[2]);
             snprintf(contact, MAX_STRING, "%s",  arr2[1]);
             free(arr2);
-            snprintf(query, MAX_STRING, "SELECT * FROM users WHERE name='%s'",  contact);
+            snprintf(query, MAX_STRING, "SELECT * FROM users WHERE name='%s'",  contact); // Consulto a la dB por el user destinario
 
             if (mysql_query(conn, query)) {
                     fprintf(stderr, "%s\n", mysql_error(conn));
@@ -159,14 +157,16 @@ static int callback_dumb_increment(struct lws *wsi,
     return 0;
 }
 
+// Config. protocolo, nombre identificatorio del socket en el front
+
 static struct lws_protocols protocols[] = {
     {
-        "http-only",   // Nombre
+        "http-only",   // Protocolo
         callback_http, 
         0             
     },
     {
-        "dumb-increment-protocol", // Nombre del protocolo
+        "dumb-increment-protocol", // "ID" del socket para el front/
         callback_dumb_increment,    
         0                          
     },
@@ -176,25 +176,26 @@ static struct lws_protocols protocols[] = {
 };
 
 int main(void) {
-    // La URL del servidor será: http://localhost:9000
 
+    // La URL del servidor será: http://localhost:9000
     conn = mysql_init(NULL);
 
     // Conexion a la base de datos
-
     if (!mysql_real_connect(conn, server, userdb, password, database, 8889, NULL, 0)) {
         fprintf(stderr, "%s\n", mysql_error(conn));
         exit(1);
     }
 
-    snprintf(query, MAX_STRING, "TRUNCATE TABLE users");
+    snprintf(query, MAX_STRING, "TRUNCATE TABLE users"); // Eliminacion de todos los user
 
     if (mysql_query(conn, query)) {
         fprintf(stderr, "%s\n", mysql_error(conn));
         exit(1);
     }
-
+    
     mysql_close(conn);
+
+    // Configuracion para la creacion del socket
     int port = 9000;
     struct lws_context *context;
     struct lws_context_creation_info context_info = {
@@ -203,7 +204,7 @@ int main(void) {
         .gid = -1, .uid = -1, .options = 0, NULL, .ka_time = 0, .ka_probes = 0, .ka_interval = 0
     };
 
-    context = lws_create_context(&context_info); // Crear 'contexto'
+    context = lws_create_context(&context_info); // Crear conexion/contexto
 
     if (context == NULL) {
         fprintf(stderr, "LWS falló \n");
@@ -216,7 +217,7 @@ int main(void) {
         lws_service(context, 50); // Proceso de todos los eventos
     }
     
-    lws_context_destroy(context);
+    lws_context_destroy(context); // Destruye la conexion
     
     return 0;
 }
