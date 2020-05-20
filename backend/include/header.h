@@ -11,11 +11,11 @@ int  pop();
 
 // Creacion de pila (100 de capacidad)
 
-long stack[SIZE];
+extern long stack[SIZE];
 
 // Inicializacion
 
-int top;
+extern int top;
 
 // Declaracion de variables
 
@@ -26,8 +26,8 @@ MYSQL_ROW row;
 // Declaracion y seteo de MySQL
 
 #define server "localhost"
-#define userdb  "root"
-#define password  "root"
+#define userdb  "admin"
+#define password  "lucia2012"
 #define database  "chat"
 #define MAX_STRING 128
 char query[MAX_STRING];

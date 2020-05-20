@@ -1,8 +1,5 @@
 #include "../include/header.h"
 
-// Inicializacion
-extern int top;
-
 int explode(char ***arr_ptr, char *str, char delimiter){
   char *src = str, *end, *dst;
   char **arr;
@@ -105,49 +102,50 @@ static int callback_dumb_increment(struct lws *wsi,
 
                 // Reseteo contacto
                 reset_contact(len);
+            } else {
+               // Enviar mensaje
+                        explode(&arr2, (char *) in, ':'); // Separo el array con dos puntos
+                        snprintf(iscontact, MAX_STRING, "%s",  arr2[0]);
+                        snprintf(message, MAX_STRING, "%s",  arr2[2]);
+                        snprintf(contact, MAX_STRING, "%s",  arr2[1]);
+                        free(arr2);
+                        snprintf(query, MAX_STRING, "SELECT * FROM users WHERE name='%s'",  contact); // Consulto a la dB por el user destinario
+
+                        if (mysql_query(conn, query)) {
+                                fprintf(stderr, "%s\n", mysql_error(conn));
+                        }
+
+                        res = mysql_store_result(conn);
+                        char value[10];
+                        char *eptr;
+                        long long wsi_long;
+
+                        while ((row = mysql_fetch_row(res)) != NULL) {
+                            strcpy(value, row[1]);
+                            wsi_long = strtoll(value, &eptr, 10);
+                        }
+
+                        mysql_free_result(res);
+                        snprintf(query, MAX_STRING, "SELECT * FROM users WHERE token='%lu'",  wsi);
+
+                        if (mysql_query(conn, query)) {
+                                fprintf(stderr, "%s\n", mysql_error(conn));
+                        }
+
+                        res = mysql_store_result(conn);
+
+                        while ((row = mysql_fetch_row(res)) != NULL) {
+                            snprintf(messagefull, MAX_STRING, "from:%s:%s", row[2],message);
+                            len = strlen(messagefull);
+                            out = (char *)malloc(sizeof(char)*(LWS_SEND_BUFFER_PRE_PADDING + len + LWS_SEND_BUFFER_POST_PADDING));
+                            // Configuracion del buffer
+                            memcpy (out + LWS_SEND_BUFFER_PRE_PADDING, messagefull, len );
+                            lws_write(wsi_long,  out + LWS_SEND_BUFFER_PRE_PADDING, len, LWS_WRITE_TEXT);
+                            free(out);
+                        }
+                        free(buf);
             }
 
-            // Enviar mensaje
-            explode(&arr2, (char *) in, ':'); // Separo el array con dos puntos
-            snprintf(iscontact, MAX_STRING, "%s",  arr2[0]);
-            snprintf(message, MAX_STRING, "%s",  arr2[2]);
-            snprintf(contact, MAX_STRING, "%s",  arr2[1]);
-            free(arr2);
-            snprintf(query, MAX_STRING, "SELECT * FROM users WHERE name='%s'",  contact); // Consulto a la dB por el user destinario
-
-            if (mysql_query(conn, query)) {
-                    fprintf(stderr, "%s\n", mysql_error(conn));
-            }
-
-            res = mysql_store_result(conn);
-            char value[10];
-            char *eptr;
-            long long wsi_long;
-
-            while ((row = mysql_fetch_row(res)) != NULL) {
-                strcpy(value, row[1]);
-                wsi_long = strtoll(value, &eptr, 10);
-            }
-
-            mysql_free_result(res);
-            snprintf(query, MAX_STRING, "SELECT * FROM users WHERE token='%lu'",  wsi);
-
-            if (mysql_query(conn, query)) {
-                    fprintf(stderr, "%s\n", mysql_error(conn));
-            }
-
-            res = mysql_store_result(conn);
-
-            while ((row = mysql_fetch_row(res)) != NULL) {
-                snprintf(messagefull, MAX_STRING, "from:%s:%s", row[2],message);
-                len = strlen(messagefull);
-                out = (char *)malloc(sizeof(char)*(LWS_SEND_BUFFER_PRE_PADDING + len + LWS_SEND_BUFFER_POST_PADDING));
-                // Configuracion del buffer
-                memcpy (out + LWS_SEND_BUFFER_PRE_PADDING, messagefull, len );
-                lws_write(wsi_long,  out + LWS_SEND_BUFFER_PRE_PADDING, len, LWS_WRITE_TEXT);
-                free(out);
-            }
-            free(buf);
             break;
         }
         default:

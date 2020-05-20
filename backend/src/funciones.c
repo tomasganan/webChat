@@ -2,7 +2,8 @@
 
 // Funcion push (Pushea nuevos elementos a la pila)
 
-extern int top;
+int top = -1;
+long stack[SIZE];
 
 void push(long element){
     if (top >= SIZE){
@@ -27,7 +28,6 @@ int pop(){
 // Funcion reset (Reseteo de contacto = user)
 
 void reset_contact(int len) {
-
   char contact[MAX_STRING] = {0};
   char reset[MAX_STRING] = {0};
   char *out = NULL;
@@ -55,6 +55,8 @@ void reset_contact(int len) {
     fprintf(stderr, "%s\n", mysql_error(conn));
     exit(1);
   }
+
+
   int i = 0;
   for (i = 0; i < top + 1; i++) { // Recorro la pila
     snprintf(reset, MAX_STRING, "reset");
@@ -63,7 +65,9 @@ void reset_contact(int len) {
                                          LWS_SEND_BUFFER_POST_PADDING));
     // Configuracion del buffer
     memcpy(out + LWS_SEND_BUFFER_PRE_PADDING, reset, len);
+
     lws_write(stack[i], out + LWS_SEND_BUFFER_PRE_PADDING, len, LWS_WRITE_TEXT);
+
     free(out);
   }
   res = mysql_store_result(conn);
@@ -77,10 +81,11 @@ void reset_contact(int len) {
                                            LWS_SEND_BUFFER_POST_PADDING));
       // Configuracion del buffer
       memcpy(out + LWS_SEND_BUFFER_PRE_PADDING, contact, len);
+
       lws_write(stack[j], out + LWS_SEND_BUFFER_PRE_PADDING, len,
                 LWS_WRITE_TEXT);
       free(out);
-    }
+ }
   }
   pop();
 
