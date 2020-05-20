@@ -27,7 +27,7 @@ MYSQL_ROW row;
 
 #define server "localhost"
 #define userdb  "admin"
-#define password  "lucia2012"
+#define password  "admin"
 #define database  "chat"
 #define MAX_STRING 128
 char query[MAX_STRING];

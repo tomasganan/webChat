@@ -59,9 +59,15 @@ static int callback_dumb_increment(struct lws *wsi,
             
             // Reseteo contacto
             reset_contact(len);
+
+
+          printf("FIN DE SESION.\n");
         }
 
-        case LWS_CALLBACK_RECEIVE: { // Creacion de buffer para almacenar respuesta 
+        case LWS_CALLBACK_RECEIVE: { // Creacion de buffer para almacenar respuesta
+            if(!(char *) in) {
+                return;
+            }
             unsigned char *buf = (unsigned char*) malloc(LWS_SEND_BUFFER_PRE_PADDING + len + LWS_SEND_BUFFER_POST_PADDING);
             int i;
 
@@ -80,8 +86,12 @@ static int callback_dumb_increment(struct lws *wsi,
             char **arr2;
             char isUserNameString[MAX_STRING] = {0};
             char contact[MAX_STRING] = {0};
+            char from[MAX_STRING] = {0};
+            char to[MAX_STRING] = {0};
+            char date[MAX_STRING] = {0};
+            char msj[MAX_STRING] = {0};
             strncpy(isUserNameString, (char *) in, 11);
-            isUserNameString[11] = '\0';
+            isUserNameString[11] = '\0';;
 
             if(strcmp("firstnamews", isUserNameString) == 0) {
                 explode(&arr, (char *) in, ':');
@@ -122,6 +132,7 @@ static int callback_dumb_increment(struct lws *wsi,
 
                         while ((row = mysql_fetch_row(res)) != NULL) {
                             strcpy(value, row[1]);
+                            snprintf(from, MAX_STRING, "%s", row[2]);
                             wsi_long = strtoll(value, &eptr, 10);
                         }
 
@@ -137,13 +148,20 @@ static int callback_dumb_increment(struct lws *wsi,
                         while ((row = mysql_fetch_row(res)) != NULL) {
                             snprintf(messagefull, MAX_STRING, "from:%s:%s", row[2],message);
                             len = strlen(messagefull);
+                            snprintf(to, MAX_STRING, "%s", row[2]);
                             out = (char *)malloc(sizeof(char)*(LWS_SEND_BUFFER_PRE_PADDING + len + LWS_SEND_BUFFER_POST_PADDING));
                             // Configuracion del buffer
                             memcpy (out + LWS_SEND_BUFFER_PRE_PADDING, messagefull, len );
                             lws_write(wsi_long,  out + LWS_SEND_BUFFER_PRE_PADDING, len, LWS_WRITE_TEXT);
                             free(out);
                         }
+                        mysql_free_result(res);
                         free(buf);
+                        snprintf(msj, MAX_STRING, "%s", message);
+                        snprintf(query, MAX_STRING, "INSERT INTO msj  (desde, recibe, mensaje) VALUES ('%s', '%s', '%s');", from, to, msj);
+                        if (mysql_query(conn, query)) {
+                            fprintf(stderr, "%s\n", mysql_error(conn));
+                        }
             }
 
             break;
