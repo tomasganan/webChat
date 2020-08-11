@@ -2,7 +2,12 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+let url = 'ws://127.0.0.1:9000';
+let protocol = 'dumb-increment-protocol';
+
 export const environment = {
+  APIURL: url,
+  PROTOCOL: protocol,
   production: false
 };
 

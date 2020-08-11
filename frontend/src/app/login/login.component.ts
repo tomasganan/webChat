@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from '../../environments/environment'
 
 export class Message {
   from: string;
@@ -25,8 +26,8 @@ export class LoginComponent implements OnInit{
   message: any;
   messages: Message[] = [];
   constructor(private toastr: ToastrService) {
-    this.websocket = new WebSocket('ws://127.0.0.1:9000',
-      'dumb-increment-protocol');
+    this.websocket = new WebSocket(environment.APIURL,
+      environment.PROTOCOL);
   }
 
   login() {
