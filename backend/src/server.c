@@ -1,4 +1,4 @@
-#include "../include/header.h"
+#include "header.h"
 
 int explode(char ***arr_ptr, char *str, char delimiter){
   char *src = str, *end, *dst;
@@ -37,7 +37,7 @@ static int callback_http(struct lws *wsi,
 static int callback_dumb_increment(struct lws *wsi,
                                    enum lws_callback_reasons reason,
                                    void *user, void *in, size_t len){
-    long wsi_adress = wsi; // El WSI seria como el puntero a la instancia de un websocket
+    long wsi_adress = wsi; // El WSI seria como el puntero a la instancia de un websocket  
     conn = mysql_init(NULL); // Declaracion de variable para la dB
 
     // Conexion a la base de datos
@@ -181,7 +181,7 @@ static struct lws_protocols protocols[] = {
         callback_http, 
         0             
     },
-    {
+    {dumb
         "dumb-increment-protocol", // "ID" del socket para el front/
         callback_dumb_increment,    
         0                          

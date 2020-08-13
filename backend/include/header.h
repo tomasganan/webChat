@@ -25,10 +25,6 @@ MYSQL_ROW row;
 
 // Declaracion y seteo de MySQL
 
-#define server "localhost"
-#define userdb  "admin"
-#define password  "admin"
-#define database  "chat"
 #define MAX_STRING 128
 char query[MAX_STRING];
 char messagefull[MAX_STRING];
