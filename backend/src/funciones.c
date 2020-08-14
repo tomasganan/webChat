@@ -1,4 +1,4 @@
-#include "../include/header.h"
+#include "header.h"
 
 // Funcion push (Pushea nuevos elementos a la pila)
 
