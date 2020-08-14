@@ -2,6 +2,7 @@
 #include <mysql.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <iniparser.h>
 #define SIZE 100
 
 // Declaracion de funcion para realizar push-pop

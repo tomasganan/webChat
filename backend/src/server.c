@@ -4,6 +4,18 @@ int explode(char ***arr_ptr, char *str, char delimiter){
   char *src = str, *end, *dst;
   char **arr;
   int size = 1, i;
+  
+  // IniParser
+
+  char *nomFile = NULL;
+  dictionary *memFIle = NULL;
+
+  // Cargo archivo de configuracion .ini
+
+  ini = iniparser_load(config.ini);
+
+    printf("Valor leido: %s\n", iniparser_getstring(ini,"SECCION_1:clave_string",NULL));
+
 
   while ((end = strchr(src, delimiter)) != NULL){
       ++size;
@@ -191,7 +203,7 @@ static struct lws_protocols protocols[] = {
     }
 };
 
-int main(void) {
+int main(int argc, char **argv) {
 
     // La URL del servidor será: http://localhost:9000
     conn = mysql_init(NULL);
