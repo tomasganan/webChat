@@ -14,7 +14,6 @@ int explode(char ***arr_ptr, char *str, char delimiter){
 
   ini = iniparser_load(config.ini);
 
-    printf("Valor leido: %s\n", iniparser_getstring(ini,"SECCION_1:clave_string",NULL));
 
 
   while ((end = strchr(src, delimiter)) != NULL){
