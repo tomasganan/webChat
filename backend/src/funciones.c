@@ -1,4 +1,4 @@
-#include "header.h"
+#include "funciones.h"
 
 // Funcion push (Pushea nuevos elementos a la pila)
 
@@ -27,7 +27,7 @@ int pop(){
 
 // Funcion reset (Reseteo de contacto = user)
 
-void reset_contact(int len) {
+void reset_contact(int len, char* query, MYSQL* conn, MYSQL_RES* res, MYSQL_ROW* row) {
   char contact[MAX_STRING] = {0};
   char reset[MAX_STRING] = {0};
   char *out = NULL;

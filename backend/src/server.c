@@ -1,20 +1,14 @@
-#include "header.h"
+#include "server.h"
+
+char *server, *userdb, *password, *database;
+char *ip;
+int port;
 
 int explode(char ***arr_ptr, char *str, char delimiter){
   char *src = str, *end, *dst;
   char **arr;
   int size = 1, i;
   
-  // IniParser
-
-  char *nomFile = NULL;
-  dictionary *memFIle = NULL;
-
-  // Cargo archivo de configuracion .ini
-
-  ini = iniparser_load(config.ini);
-
-
 
   while ((end = strchr(src, delimiter)) != NULL){
       ++size;
@@ -52,7 +46,7 @@ static int callback_dumb_increment(struct lws *wsi,
     conn = mysql_init(NULL); // Declaracion de variable para la dB
 
     // Conexion a la base de datos
-    if (!mysql_real_connect(conn, server, userdb, password, database, 8889, NULL, 0)){
+    if (!mysql_real_connect(conn, server, userdb, password, database, port, NULL, 0)){
         fprintf(stderr, "%s\n", mysql_error(conn)); // En caso de error, lo comunica
         exit(1);
     }
@@ -192,7 +186,7 @@ static struct lws_protocols protocols[] = {
         callback_http, 
         0             
     },
-    {dumb
+    {/* dumb */
         "dumb-increment-protocol", // "ID" del socket para el front/
         callback_dumb_increment,    
         0                          
@@ -203,27 +197,29 @@ static struct lws_protocols protocols[] = {
 };
 
 int main(int argc, char **argv) {
+    
+    read_data();
+
 
     // La URL del servidor será: http://localhost:9000
     conn = mysql_init(NULL);
 
     // Conexion a la base de datos
-    if (!mysql_real_connect(conn, server, userdb, password, database, 8889, NULL, 0)) {
-        fprintf(stderr, "%s\n", mysql_error(conn));
-        exit(1);
-    }
-
-    snprintf(query, MAX_STRING, "TRUNCATE TABLE users"); // Eliminacion de todos los user
-
-    if (mysql_query(conn, query)) {
+    if (!mysql_real_connect(conn, server, userdb, password, database, port, NULL, 0)) {
         fprintf(stderr, "%s\n", mysql_error(conn));
         exit(1);
     }
     
+    snprintf(query, MAX_STRING, "TRUNCATE TABLE users;"); // Eliminacion de todos los user
+    
+    if (mysql_query(conn, query)) {
+        fprintf(stderr, "%s\n", mysql_error(conn));
+        exit(1);
+    }
+
     mysql_close(conn);
 
-    // Configuracion para la creacion del socket
-    int port = 9000;
+    // Configuracion para la creacion del socketport
     struct lws_context *context;
     struct lws_context_creation_info context_info = {
         .port = port, .iface = NULL, .protocols = protocols, .extensions = NULL,
@@ -247,4 +243,33 @@ int main(int argc, char **argv) {
     lws_context_destroy(context); // Destruye la conexion
     
     return 0;
+}
+
+void read_data() {
+  // IniParser
+
+  char *nomFile = "src/config.ini";
+  dictionary *ini = NULL;
+
+  // Cargo archivo de configuracion .ini
+
+  ini = iniparser_load(nomFile);
+
+  server = iniparser_getstring(ini, "DATABASE:server", NULL);
+  printf("%s\n", server);
+  userdb = iniparser_getstring(ini, "DATABASE:userdb", NULL);
+  printf("%s\n", userdb);
+  password = iniparser_getstring(ini, "DATABASE:password", NULL);
+  printf("%s\n", password);
+  if(!strcmp(password, ""))
+    password = NULL;
+
+  database = iniparser_getstring(ini, "DATABASE:database", NULL);
+  printf("%s\n", database);
+  ip = iniparser_getstring(ini, "SERVER:ip", NULL);
+  printf("%s\n", ip);
+  port = iniparser_getint(ini, "SERVER:port", -1);
+  printf("%d\n", port);
+
+  iniparser_freedict(ini);
 }
