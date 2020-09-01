@@ -209,7 +209,16 @@ int main(int argc, char **argv) {
         fprintf(stderr, "%s\n", mysql_error(conn));
         exit(1);
     }
+
     
+    // snprintf(query, MAX_STRING, "USE chat;"); // Eliminacion de todos los user
+    
+    // if (mysql_query(conn, query)) {
+    //     fprintf(stderr, "%s\n", mysql_error(conn));
+    //     exit(1);
+    // }
+    
+
     snprintf(query, MAX_STRING, "TRUNCATE TABLE users;"); // Eliminacion de todos los user
     
     if (mysql_query(conn, query)) {
